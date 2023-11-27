@@ -38,13 +38,12 @@ namespace ServeurMessagerie
             do
             {
                 try
-                {
-                    // l'appel à AcceptTcpClient est bloquant
+                {                 //AcceptTcpClient est bloquant
                     TcpClient client = listener.AcceptTcpClient();
                     // On met ce client dans un Thread qui va renvoyer tout ce qu'il reçoit jusqu'à ce que le client se ferme
-                    Client metier = new Client(client);
-                    clients.Add(metier);
-                    metier.Start();
+                    Client leClient = new Client(client);
+                    clients.Add(leClient);
+                    leClient.Start();
                     // et on retourne attendre une connection
                 }
                 catch
