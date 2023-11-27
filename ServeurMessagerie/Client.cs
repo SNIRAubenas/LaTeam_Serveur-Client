@@ -12,7 +12,7 @@ namespace ServeurMessagerie
         private TcpClient client;
         private NetworkStream stream;
         private Thread thread;
-        private Mutex mutex;
+        //private Mutex mutex;
         private Serveur serveur;
 
         public Client(TcpClient client, Serveur serveur)
@@ -31,33 +31,37 @@ namespace ServeurMessagerie
         void threadStart(object? obj)
         {
             byte[] buffer = new byte[2048];
-            mutex = new Mutex(true);
+           // mutex = new Mutex(false);
 
             do
             {
                 try
-                {
+                {                                    
                     int read = stream.Read(buffer, 0, buffer.Length);
 
-                    String recu = ASCIIEncoding.ASCII.GetString(buffer);
+                    if (read == 0) {
+                        break;
+                    }
+
+                    String recu = ASCIIEncoding.ASCII.GetString(buffer);                 
                     Console.WriteLine(recu);
                     
                     foreach(Client c in serveur.clients)
-                    {
-                        //mutex.ReleaseMutex();
-                        c.stream.Write(buffer, 0, read);
-                        //mutex.WaitOne();
-                    }
-
+                    {                       
+                        c.stream.Write(buffer, 0, read);                       
+                    }                  
 
                     //stream.Write(buffer, 0, read);
                 }
                 catch
                 {
+                    Console.WriteLine("Client perdu");
                     break;
                 }
 
             } while (true);
+            client.Close();
+         
 
         }
 
