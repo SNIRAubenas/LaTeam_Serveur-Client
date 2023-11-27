@@ -28,7 +28,16 @@ namespace ServeurMessagerie
             }
 
             IPAddress ipLocal = IPAddress.Parse(localIP);
-            Console.WriteLine(ipLocal);
+            Serveur server = new Serveur(ipLocal);
+
+            Console.WriteLine("--=== Serveur Echo ===--");
+            Console.WriteLine("Adresse IP : " + localIP);
+            Console.WriteLine("Serveur démarré...");
+            server.Start();
+            //
+            Console.WriteLine("Appuyez sur Entree pour terminer...");
+            Console.ReadLine();
+            server.Stop();
 
         }
 
