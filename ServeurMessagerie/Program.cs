@@ -11,7 +11,7 @@ namespace ServeurMessagerie
 
             string localIP = null;
 
-            if (ips.Count >= 1)
+            if (ips.Count > 1)
             {
                 Console.WriteLine("--=== Choix adresse IP ===--");
                 for (int i = 0; i < ips.Count; i++)

@@ -34,6 +34,9 @@ namespace ServeurMessagerie
                 try
                 {
                     int read = stream.Read(buffer, 0, buffer.Length);
+
+                    String recu = ASCIIEncoding.ASCII.GetString(buffer);
+                    Console.WriteLine(recu);
                     stream.Write(buffer, 0, read);
                 }
                 catch
