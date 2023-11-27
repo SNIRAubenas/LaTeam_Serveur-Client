@@ -11,12 +11,6 @@ namespace ServeurMessagerie
 {
     internal class Serveur
     {
-
-        private IPEndPoint ep;
-        private TcpListener listener;
-        private Thread th;
-        private List<EchoWork> clients;
-
         private IPEndPoint ep;
         private TcpListener listener;
         private Thread th;
