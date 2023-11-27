@@ -43,12 +43,10 @@ namespace ServeurMessagerie
                     // On met ce client dans un Thread qui va renvoyer tout ce qu'il reçoit jusqu'à ce que le client se ferme
                     Client leClient = new Client(client);
                     clients.Add(leClient);
-                    leClient.Start();
-                    // et on retourne attendre une connection
+                    leClient.Start();                   
                 }
-                catch
-                {
-                    // Quelle que soit la raison...On sort du While (et donc du Thread)
+                catch //On CATCH toutes les erreurs
+                {              
                     break;
                 }
             } while (true);
