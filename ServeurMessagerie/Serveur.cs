@@ -40,7 +40,8 @@ namespace ServeurMessagerie
             do
             {
                 try
-                {                 //AcceptTcpClient est bloquant
+                {                 
+                    //AcceptTcpClient est bloquant
                     TcpClient client = listener.AcceptTcpClient();
                     // On met ce client dans un Thread qui va renvoyer tout ce qu'il reçoit jusqu'à ce que le client se ferme
                     Client leClient = new Client(client);
