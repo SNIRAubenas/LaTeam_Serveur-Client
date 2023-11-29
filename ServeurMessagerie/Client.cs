@@ -18,7 +18,7 @@ namespace ServeurMessagerie
 
         public Client(TcpClient client, Serveur serveur)
         {
-            mutex = new Mutex();
+            this.mutex = new Mutex();
             this.client = client;
             this.stream = client.GetStream();
             this.serveur = serveur;
