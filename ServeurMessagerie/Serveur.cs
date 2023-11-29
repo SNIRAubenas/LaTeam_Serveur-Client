@@ -11,71 +11,46 @@ namespace ServeurMessagerie
 {
     internal class Serveur
     {
-        private IPEndPoint ep;
-        private TcpListener listener;
-        private Thread th;
-        private Mutex mutex;
-        public List<Client> clients;
+        private TcpListener tcpListener;
+        public List<Client> clients = new List<Client>();
+        private Mutex mutexClient = new Mutex();
 
-
-        
-   
-
-        public Serveur(IPAddress ipLocal)
+        public Serveur()
         {
-            // Echo est sur le port 6666
-            ep = new IPEndPoint(ipLocal, 6666);
-            listener = new TcpListener(ep);
-          
-            clients = new List<Client>();
-            mutex = new Mutex(false);
 
-        }
+            this.tcpListener = new TcpListener(IPAddress.Any, 6666);
+            this.tcpListener.Start();
 
-        public void Start()
-        {
-            th = new Thread(this.threadStart);
-            th.Start();
-        }
+            Console.WriteLine("Server started...");
 
-        void threadStart()
-        {
-            listener.Start();
-            do
+            while (true)
             {
-                try
-                {                 
-                    //AcceptTcpClient est bloquant
-                    TcpClient client = listener.AcceptTcpClient();
-                    Console.WriteLine("Nouveau Client !");
-                    // On met ce client dans un Thread qui va renvoyer tout ce qu'il reçoit jusqu'à ce que le client se ferme
-                    Client leClient = new Client(client,this);
+                TcpClient tcpClient = this.tcpListener.AcceptTcpClient();
+                Console.WriteLine("Client connected...");
 
-                    mutex.WaitOne();
-                    clients.Add(leClient);
-                    mutex.ReleaseMutex();
+                Client client = new Client(tcpClient, this);
 
-                    leClient.Start();                   
-                }
-                catch //On CATCH toutes les erreurs
-                {              
-                    break;
-                }
-            } while (true);
-        }
-        public void Stop()
-        {
-            // On stop le server
-            this.listener.Stop();
-            // et tous les clients connectés
-            foreach (var client in clients)
-            {
-                client.Stop();
+                mutexClient.WaitOne();// Acquérir le Mutex avant de manipuler la liste des clients
+                clients.Add(client);
+                mutexClient.ReleaseMutex(); //Lacher le Mutex
+
+                Thread clientThread = new Thread(new ThreadStart(client.Run));
+                clientThread.Start();
             }
         }
 
-
-        
+        public void BroadcastMessage(string message, Client sender)
+        {
+            mutexClient.WaitOne();// Acquérir le Mutex avant de manipuler la liste des clients
+            foreach (var client in clients)
+            {
+                if (client != sender)
+                {
+                    client.SendMessage(message);
+                }
+            }
+            mutexClient.ReleaseMutex(); //Lacher le Mutex après avoir manipuler la liste des clients
+        }
 
     }
 }

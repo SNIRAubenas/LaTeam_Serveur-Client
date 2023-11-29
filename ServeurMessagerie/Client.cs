@@ -9,72 +9,53 @@ namespace ServeurMessagerie
 {
     class Client
     {
-        private TcpClient client;
-        private NetworkStream stream;
-        private Thread thread;
-        private Mutex mutex;
-        private string username;
-        private Serveur serveur;
+        private TcpClient tcpClient;
+        private Serveur server;
+        private NetworkStream clientStream;
 
-        public Client(TcpClient client, Serveur serveur)
+        public Client(TcpClient tcpClient, Serveur server)
         {
-            this.mutex = new Mutex();
-            this.client = client;
-            this.stream = client.GetStream();
-            this.serveur = serveur;
+            this.tcpClient = tcpClient;
+            this.server = server;
+            this.clientStream = tcpClient.GetStream();
         }
 
-        public void Start()
+        public void Run()
         {
-            this.thread = new Thread(this.threadStart);
-            this.thread.Start();
-        }
+            byte[] message = new byte[4096];
+            int bytesRead;
 
-        void threadStart(object? obj)
-        {
-            byte[] buffer = new byte[2048];
-            
-
-            do
+            while (true)
             {
+                bytesRead = 0;
+
                 try
-                {                                    
-                    int read = stream.Read(buffer, 0, buffer.Length);
-                    
-                    if (read == 0) {
-                        break;
-                    }
-
-                    String recu = ASCIIEncoding.ASCII.GetString(buffer);
-                    string messageFinal = this.username + " : " + recu;
-
-                    Console.WriteLine(messageFinal);
-
-                    byte[] bytesFinal = Encoding.ASCII.GetBytes(messageFinal);
-
-                    mutex.WaitOne();
-                    foreach (Client c in serveur.clients)
-                    {                       
-                        c.stream.Write(bytesFinal, 0, bytesFinal.Length);                       
-                    }                  
-                    mutex.ReleaseMutex();
-                    
+                {
+                    bytesRead = clientStream.Read(message, 0, 4096);
                 }
                 catch
                 {
-                    Console.WriteLine("Client perdu");
                     break;
                 }
 
-            } while (true);
-            client.Close();
-         
+                if (bytesRead == 0)
+                    break;
 
+                string clientMessage = Encoding.ASCII.GetString(message, 0, bytesRead);
+                Console.WriteLine("Client says: " + clientMessage);
+
+                server.BroadcastMessage(clientMessage, this);
+            }
+
+            tcpClient.Close();
+            this.server.clients.Remove(this);
         }
 
-        public void Stop() 
+        public void SendMessage(string message)
         {
-            this.client.Close();
+            byte[] data = Encoding.ASCII.GetBytes(message);
+            clientStream.Write(data, 0, data.Length);
+            clientStream.Flush();
         }
     }
 }
