@@ -14,6 +14,7 @@ namespace ServeurMessagerie
         private IPEndPoint ep;
         private TcpListener listener;
         private Thread th;
+        private Mutex mutex;
         public List<Client> clients;
 
 
@@ -22,11 +23,12 @@ namespace ServeurMessagerie
 
         public Serveur(IPAddress ipLocal)
         {
-            // Echo est sur le port 1234
-            ep = new IPEndPoint(ipLocal, 1234);
+            // Echo est sur le port 6666
+            ep = new IPEndPoint(ipLocal, 6666);
             listener = new TcpListener(ep);
           
             clients = new List<Client>();
+            mutex = new Mutex(false);
 
         }
 
@@ -49,9 +51,9 @@ namespace ServeurMessagerie
                     // On met ce client dans un Thread qui va renvoyer tout ce qu'il reçoit jusqu'à ce que le client se ferme
                     Client leClient = new Client(client,this);
 
-                    //Mutex WAITONE
+                    mutex.WaitOne();
                     clients.Add(leClient);
-                    //Mutex RELEASE
+                    mutex.ReleaseMutex();
 
                     leClient.Start();                   
                 }
