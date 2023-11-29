@@ -47,7 +47,7 @@ namespace ServeurMessagerie
                     TcpClient client = listener.AcceptTcpClient();
                     Console.WriteLine("Nouveau Client !");
                     // On met ce client dans un Thread qui va renvoyer tout ce qu'il reçoit jusqu'à ce que le client se ferme
-                    Client leClient = new Client(client,this);
+                    Client leClient = new Client(client,this, "LOLOLOLOLOL");
                     clients.Add(leClient);
                     leClient.Start();                   
                 }

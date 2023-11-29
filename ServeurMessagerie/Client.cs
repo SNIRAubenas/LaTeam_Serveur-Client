@@ -12,14 +12,16 @@ namespace ServeurMessagerie
         private TcpClient client;
         private NetworkStream stream;
         private Thread thread;
+        private string username;
         //private Mutex mutex;
         private Serveur serveur;
 
-        public Client(TcpClient client, Serveur serveur)
+        public Client(TcpClient client, Serveur serveur, string username)
         {
             this.client = client;
             this.stream = client.GetStream();
             this.serveur = serveur;
+            this.username = username;
         }
 
         public void Start()
@@ -38,17 +40,23 @@ namespace ServeurMessagerie
                 try
                 {                                    
                     int read = stream.Read(buffer, 0, buffer.Length);
-
+                    
                     if (read == 0) {
                         break;
                     }
 
-                    String recu = ASCIIEncoding.ASCII.GetString(buffer);                 
-                    Console.WriteLine(recu);
-                    
-                    foreach(Client c in serveur.clients)
+                    String recu = ASCIIEncoding.ASCII.GetString(buffer);
+                    string messageFinal = this.username + " : " + recu;
+
+                    Console.WriteLine(messageFinal);
+
+                    byte[] bytesFinal = Encoding.ASCII.GetBytes(messageFinal);
+
+                    //int readFinal = read + 
+
+                    foreach (Client c in serveur.clients)
                     {                       
-                        c.stream.Write(buffer, 0, read);                       
+                        c.stream.Write(bytesFinal, 0, bytesFinal.Length);                       
                     }                  
 
                     //stream.Write(buffer, 0, read);
