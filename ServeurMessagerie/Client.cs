@@ -12,12 +12,14 @@ namespace ServeurMessagerie
         private TcpClient client;
         private NetworkStream stream;
         private Thread thread;
+        private Mutex mutex;
         private string username;
         //private Mutex mutex;
         private Serveur serveur;
 
         public Client(TcpClient client, Serveur serveur)
         {
+            mutex = new Mutex();
             this.client = client;
             this.stream = client.GetStream();
             this.serveur = serveur;
@@ -32,7 +34,7 @@ namespace ServeurMessagerie
         void threadStart(object? obj)
         {
             byte[] buffer = new byte[2048];
-           // mutex = new Mutex(false);
+            
 
             do
             {
@@ -55,7 +57,8 @@ namespace ServeurMessagerie
                     {                       
                         c.stream.Write(bytesFinal, 0, bytesFinal.Length);                       
                     }                  
-
+                    mutex.ReleaseMutex();
+                    
                 }
                 catch
                 {
