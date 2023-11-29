@@ -16,12 +16,11 @@ namespace ServeurMessagerie
         //private Mutex mutex;
         private Serveur serveur;
 
-        public Client(TcpClient client, Serveur serveur, string username)
+        public Client(TcpClient client, Serveur serveur)
         {
             this.client = client;
             this.stream = client.GetStream();
             this.serveur = serveur;
-            this.username = username;
         }
 
         public void Start()
@@ -52,14 +51,11 @@ namespace ServeurMessagerie
 
                     byte[] bytesFinal = Encoding.ASCII.GetBytes(messageFinal);
 
-                    //int readFinal = read + 
-
                     foreach (Client c in serveur.clients)
                     {                       
                         c.stream.Write(bytesFinal, 0, bytesFinal.Length);                       
                     }                  
 
-                    //stream.Write(buffer, 0, read);
                 }
                 catch
                 {
