@@ -42,7 +42,7 @@ namespace ServeurMessagerie
                     break;
 
                 string clientMessage = Encoding.ASCII.GetString(message, 0, bytesRead);
-                Console.WriteLine("Client says: " + clientMessage);
+                Console.WriteLine(clientMessage);
 
                 server.BroadcastMessage(clientMessage, this);
             }

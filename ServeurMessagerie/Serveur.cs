@@ -21,12 +21,12 @@ namespace ServeurMessagerie
             this.tcpListener = new TcpListener(IPAddress.Any, 6666);
             this.tcpListener.Start();
 
-            Console.WriteLine("Server started...");
+            Console.WriteLine("Serveur démarré !");
 
             while (true)
             {
                 TcpClient tcpClient = this.tcpListener.AcceptTcpClient();
-                Console.WriteLine("Client connected...");
+                Console.WriteLine("Nouveau client !");
 
                 Client client = new Client(tcpClient, this);
 
