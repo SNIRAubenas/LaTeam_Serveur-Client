@@ -14,12 +14,14 @@ namespace ServeurMessagerie
         private NetworkStream clientStream;
         private string username;
         private bool firstMessage = true;
+        private Message userMessage;
 
-        public Client(TcpClient tcpClient, Serveur server)
+        public Client(TcpClient tcpClient, Serveur server, Message userMessage)
         {
             this.tcpClient = tcpClient;
             this.server = server;
             this.clientStream = tcpClient.GetStream();
+            this.userMessage = userMessage;
         }
 
         public void Run()
@@ -49,18 +51,20 @@ namespace ServeurMessagerie
                 {
                     this.username = clientMessage;
                     firstMessage = false;
+                    server.BroadcastMessage(this, userMessage);
                 } else
                 {
                     if(this.username != null)
                     {
                         string messageFinal = this.username + " : " + clientMessage;
-                        Message userMessage = new Message(messageFinal);
+                       
+                        userMessage.MessagesGetterSetter.Add(messageFinal);
 
-                        server.BroadcastMessage(messageFinal, this, userMessage);
+                        server.BroadcastMessage(this, userMessage);
                     } 
                 }
 
-                Console.WriteLine(clientMessage);
+                Console.WriteLine("console : " + clientMessage);
 
             }
 

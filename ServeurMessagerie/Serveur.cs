@@ -14,6 +14,7 @@ namespace ServeurMessagerie
         private TcpListener tcpListener;
         public List<Client> clients = new List<Client>();
         private Mutex mutexClient = new Mutex();
+        private Message userMessage = new Message();
 
         public Serveur()
         {
@@ -28,7 +29,7 @@ namespace ServeurMessagerie
                 TcpClient tcpClient = this.tcpListener.AcceptTcpClient();
                 Console.WriteLine("Nouveau client !");
 
-                Client client = new Client(tcpClient, this);
+                Client client = new Client(tcpClient, this, userMessage);
 
                 mutexClient.WaitOne();// Acquérir le Mutex avant de manipuler la liste des clients
                 clients.Add(client);
@@ -39,19 +40,24 @@ namespace ServeurMessagerie
             }
         }
 
-        public void BroadcastMessage(string message, Client sender, Message messages)
+        public void BroadcastMessage(Client sender, Message messages)
         {
+            string messageAenvoyer = "";
+
+            messages.MessagesGetterSetter.ForEach(m => { 
+                if(messageAenvoyer != "")
+                {
+                    messageAenvoyer = messageAenvoyer + m.ToString().TrimEnd() + "\r\n";
+                } else
+                {
+                    messageAenvoyer =  m.ToString().TrimEnd() + "\r\n";
+                }
+            });
+
             mutexClient.WaitOne();// Acquérir le Mutex avant de manipuler la liste des clients
             foreach (var client in clients)
             {
-
-                if (client != sender)
-                   {
-                     client.SendMessage(message);
-                   }
-            
-
-                
+                client.SendMessage(messageAenvoyer);
             }
             mutexClient.ReleaseMutex(); //Lacher le Mutex après avoir manipuler la liste des clients
         }
