@@ -12,6 +12,8 @@ namespace ServeurMessagerie
         private TcpClient tcpClient;
         private Serveur server;
         private NetworkStream clientStream;
+        private string username;
+        private bool firstMessage = true;
 
         public Client(TcpClient tcpClient, Serveur server)
         {
@@ -42,9 +44,21 @@ namespace ServeurMessagerie
                     break;
 
                 string clientMessage = Encoding.ASCII.GetString(message, 0, bytesRead);
+
+                if (firstMessage)
+                {
+                    this.username = clientMessage;
+                    firstMessage = false;
+                } else
+                {
+                    if(this.username != null)
+                    {
+                        server.BroadcastMessage(this.username + " : " + clientMessage, this);
+                    } 
+                }
+
                 Console.WriteLine(clientMessage);
 
-                server.BroadcastMessage(clientMessage, this);
             }
 
             tcpClient.Close();
