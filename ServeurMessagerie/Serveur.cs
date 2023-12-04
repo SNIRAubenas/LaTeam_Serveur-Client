@@ -5,6 +5,7 @@ using System.Net.Sockets;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Data.Sqlite;
 
 namespace ServeurMessagerie
 
@@ -18,6 +19,12 @@ namespace ServeurMessagerie
 
         public Serveur()
         {
+            SqliteConnectionStringBuilder builder = new SqliteConnectionStringBuilder();
+            builder.DataSource = "archives.db";
+
+            SqliteConnection bdd = new SqliteConnection(builder.ConnectionString);
+            
+
 
             this.tcpListener = new TcpListener(IPAddress.Any, 6666);
             this.tcpListener.Start();
