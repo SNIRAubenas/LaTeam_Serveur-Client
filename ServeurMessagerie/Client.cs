@@ -53,7 +53,10 @@ namespace ServeurMessagerie
                 {
                     if(this.username != null)
                     {
-                        server.BroadcastMessage(this.username + " : " + clientMessage, this);
+                        string messageFinal = this.username + " : " + clientMessage;
+                        Message userMessage = new Message(messageFinal);
+
+                        server.BroadcastMessage(messageFinal, this, userMessage);
                     } 
                 }
 

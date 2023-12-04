@@ -39,15 +39,21 @@ namespace ServeurMessagerie
             }
         }
 
-        public void BroadcastMessage(string message, Client sender)
+        public void BroadcastMessage(string message, Client sender, Message messages)
         {
             mutexClient.WaitOne();// Acquérir le Mutex avant de manipuler la liste des clients
             foreach (var client in clients)
             {
-                if (client != sender)
+
+                foreach(var message1 in messages.getMessages)
                 {
-                    client.SendMessage(message);
+                    if (client != sender)
+                    {
+                        client.SendMessage(message1);
+                    }
                 }
+
+                
             }
             mutexClient.ReleaseMutex(); //Lacher le Mutex après avoir manipuler la liste des clients
         }
