@@ -34,7 +34,7 @@ namespace ServeurMessagerie
                 clients.Add(client);
                 mutexClient.ReleaseMutex(); //Lacher le Mutex
 
-                Thread clientThread = new Thread(new ThreadStart(client.Run));
+                Thread clientThread = new Thread(new ThreadStart(client.Run));//Lancement du client(Thread)
                 clientThread.Start();
             }
         }
@@ -45,13 +45,11 @@ namespace ServeurMessagerie
             foreach (var client in clients)
             {
 
-                foreach(var message1 in messages.getMessages)
-                {
-                    if (client != sender)
-                    {
-                        client.SendMessage(message1);
-                    }
-                }
+                if (client != sender)
+                   {
+                     client.SendMessage(message);
+                   }
+            
 
                 
             }
