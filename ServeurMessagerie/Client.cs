@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Data.Sqlite;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
@@ -12,17 +13,22 @@ namespace ServeurMessagerie
         private TcpClient tcpClient;
         private Serveur server;
         private NetworkStream clientStream;
-        private string username;
         private string utilisateurConcerne;
         private bool firstMessage = true;
         private Message userMessage;
 
-        public Client(TcpClient tcpClient, Serveur server, Message userMessage)
+
+        //BDD
+        private string username;
+        private int id;
+        private string password;
+        //BDD
+
+        public Client(TcpClient tcpClient, Serveur server, SqliteConnection bdd)
         {
             this.tcpClient = tcpClient;
             this.server = server;
             this.clientStream = tcpClient.GetStream();
-            this.userMessage = userMessage;
         }
 
         public void Run()
@@ -79,17 +85,10 @@ namespace ServeurMessagerie
                                 break;
 
                             default:
-                                string messageFinal = this.username + " : " + clientMessage;
-                                userMessage.MessagesGetterSetter.Add(messageFinal);
-                                server.BroadcastMessage(this, userMessage);
+                                string messageFinal = this.username + " " + DateTime.Now.ToString("hh:mm") + " : \r\n" + clientMessage + "\r\n";
+                                server.BroadcastMessage(this, messageFinal);
                                 break;
-                         
-
                         }
-
-                                        
-
-                        
                     } 
                 }
 
