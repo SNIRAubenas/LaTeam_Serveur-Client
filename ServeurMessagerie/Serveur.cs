@@ -29,15 +29,7 @@ namespace ServeurMessagerie
             SqliteConnection bdd = new SqliteConnection(builder.ConnectionString);
 
             bdd.Open();
-
-            var commande = bdd.CreateCommand();
-
-            commande.CommandText = "INSERT INTO utilisateurs VALUES ('Michou', 'Croute')";
-           // commande.ExecuteNonQuery();
-
-
-
-
+           
             this.tcpListener = new TcpListener(IPAddress.Any, 6666);
             this.tcpListener.Start();
 
