@@ -52,7 +52,6 @@ namespace ServeurMessagerie
                 {
                     this.username = clientMessage;
                     firstMessage = false;
-                    server.BroadcastMessage(this, userMessage);
                 } else
                 {
                     if(this.username != null)
@@ -81,8 +80,8 @@ namespace ServeurMessagerie
 
                             default:
                                 string messageFinal = this.username + " : " + clientMessage;
-                                Message userMessage = new Message(messageFinal);
-                                server.BroadcastMessage(messageFinal, this, userMessage);
+                                userMessage.MessagesGetterSetter.Add(messageFinal);
+                                server.BroadcastMessage(this, userMessage);
                                 break;
                          
 
