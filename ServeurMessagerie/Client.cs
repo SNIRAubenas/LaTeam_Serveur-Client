@@ -51,8 +51,7 @@ namespace ServeurMessagerie
                 if (firstMessage)
                 {
                     this.username = clientMessage;
-                    firstMessage = false;
-                    server.BroadcastMessage(this, userMessage);
+                    firstMessage = false;                  
                 } else
                 {
                     if(this.username != null)
@@ -88,11 +87,7 @@ namespace ServeurMessagerie
 
                         }
 
-                        if (clientMessage.StartsWith("/w")){
-
-                        }
-
-                       
+                                        
 
                         
                     } 
