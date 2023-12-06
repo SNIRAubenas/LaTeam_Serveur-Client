@@ -34,9 +34,6 @@ namespace ServeurMessagerie
 
             //command.ExecuteNonQuery();
 
-            command.CommandText = @"INSERT INTO utilisateurs (username, password) VALUES('lol','lol')";
-            command.ExecuteReader();
-
             this.tcpListener = new TcpListener(IPAddress.Any, 6666);
             this.tcpListener.Start();
 

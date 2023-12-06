@@ -19,6 +19,7 @@ namespace ServeurMessagerie
 
 
         //BDD
+        private SqliteConnection bdd;
         private string username;
         private int id;
         private string password;
@@ -29,6 +30,9 @@ namespace ServeurMessagerie
             this.tcpClient = tcpClient;
             this.server = server;
             this.clientStream = tcpClient.GetStream();
+            this.bdd = bdd;
+           
+
         }
 
         public void Run()
@@ -58,6 +62,22 @@ namespace ServeurMessagerie
                 {
                     this.username = clientMessage;
                     firstMessage = false;
+
+                    var commande = bdd.CreateCommand();
+
+                    commande.CommandText = @"SELECT * FROM utilisateurs WHERE username=$username";
+                    commande.Parameters.AddWithValue("$username", this.username);
+
+                    SqliteDataReader r = commande.ExecuteReader();
+
+                    Console.WriteLine(r.ToString()); 
+
+                    //
+
+                    commande.CommandText = @"INSERT INTO utilisateurs (username, password) VALUES('$username','lol')";
+                    commande.Parameters.AddWithValue("$username", this.username);
+                    commande.ExecuteReader();
+
                 } else
                 {
                     if(this.username != null)
