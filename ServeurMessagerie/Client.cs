@@ -63,12 +63,12 @@ namespace ServeurMessagerie
                     this.username = clientMessage;
                     firstMessage = false;
 
-                    var commande = bdd.CreateCommand();
+                    var commandeSQL = bdd.CreateCommand();
 
-                    commande.CommandText = @"SELECT * FROM utilisateurs WHERE username=$username";
-                    commande.Parameters.AddWithValue("$username", this.username);
+                    commandeSQL.CommandText = @"SELECT * FROM utilisateurs WHERE username=$username";
+                    commandeSQL.Parameters.AddWithValue("$username", this.username);
 
-                    SqliteDataReader r = commande.ExecuteReader();
+                    SqliteDataReader r = commandeSQL.ExecuteReader();
 
 
                     while (r.Read())

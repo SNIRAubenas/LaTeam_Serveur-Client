@@ -29,7 +29,7 @@ namespace ServeurMessagerie
 
             var command = bdd.CreateCommand();
 
-           
+           //SI ELLE EXISTE PAS ON CREE SINON ON MANGE AYMAN
 
             //command.CommandText = @"CREATE TABLE utilisateurs (
 	           //                     user_id INTEGER PRIMARY KEY,
