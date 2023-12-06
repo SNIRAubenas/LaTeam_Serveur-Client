@@ -87,11 +87,7 @@ namespace ServeurMessagerie
 
                         }
 
-                        if (clientMessage.StartsWith("/w")){
-
-                        }
-
-                       
+                                        
 
                         
                     } 

@@ -49,10 +49,10 @@ namespace ServeurMessagerie
 
         public void BroadcastMessage(Client sender, Message messages)
         {
-            string messageAenvoyer = "";
+            string messageAenvoyer = null;
 
             messages.MessagesGetterSetter.ForEach(m => { 
-                if(messageAenvoyer != "")
+                if(messageAenvoyer != null)
                 {
                     messageAenvoyer = messageAenvoyer + m.ToString().TrimEnd() + "\r\n";
                 } else
