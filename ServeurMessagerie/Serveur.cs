@@ -20,8 +20,6 @@ namespace ServeurMessagerie
         public Serveur()
         {
 
-
-
             SqliteConnectionStringBuilder builder = new SqliteConnectionStringBuilder();
            
             builder.DataSource = "archives.db";
@@ -30,6 +28,8 @@ namespace ServeurMessagerie
             bdd.Open();
 
             var command = bdd.CreateCommand();
+
+           
 
             //command.CommandText = @"CREATE TABLE utilisateurs (
 	           //                     user_id INTEGER PRIMARY KEY,

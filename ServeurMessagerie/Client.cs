@@ -58,6 +58,9 @@ namespace ServeurMessagerie
                 {
                     this.username = clientMessage;
                     firstMessage = false;
+
+
+
                 } else
                 {
                     if(this.username != null)
