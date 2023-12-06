@@ -6,6 +6,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Data.Sqlite;
+using System.Data.Common;
 
 namespace ServeurMessagerie
 
@@ -19,11 +20,22 @@ namespace ServeurMessagerie
 
         public Serveur()
         {
+
+
+
             SqliteConnectionStringBuilder builder = new SqliteConnectionStringBuilder();
             builder.DataSource = "archives.db";
 
             SqliteConnection bdd = new SqliteConnection(builder.ConnectionString);
-            
+
+            bdd.Open();
+
+            var commande = bdd.CreateCommand();
+
+            commande.CommandText = "INSERT INTO utilisateurs VALUES ('Michou', 'Croute')";
+           // commande.ExecuteNonQuery();
+
+
 
 
             this.tcpListener = new TcpListener(IPAddress.Any, 6666);
@@ -50,6 +62,7 @@ namespace ServeurMessagerie
         public void BroadcastMessage(Client sender, Message messages)
         {
             string messageAenvoyer = null;
+            
 
             messages.MessagesGetterSetter.ForEach(m => { 
                 if(messageAenvoyer != null)
