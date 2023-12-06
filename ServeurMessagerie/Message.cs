@@ -11,13 +11,6 @@ namespace ServeurMessagerie
     {
         private List<string> messages = new List<string>();
 
-
-
-        public Message(String message)
-        {
-            messages.Add(message);
-        }
-
-        public List<string> getMessages { get => messages; }
+        public List<string> MessagesGetterSetter { get => messages; set => messages = value; }
     }
 }
