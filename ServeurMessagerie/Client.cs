@@ -13,6 +13,7 @@ namespace ServeurMessagerie
         private Serveur server;
         private NetworkStream clientStream;
         private string username;
+        private string utilisateurConcerne;
         private bool firstMessage = true;
 
         public Client(TcpClient tcpClient, Serveur server)
@@ -53,10 +54,44 @@ namespace ServeurMessagerie
                 {
                     if(this.username != null)
                     {
-                        string messageFinal = this.username + " : " + clientMessage;
-                        Message userMessage = new Message(messageFinal);
 
-                        server.BroadcastMessage(messageFinal, this, userMessage);
+                        string[] commande = clientMessage.Split(" ",3);
+                        
+
+                        switch (commande[0])
+                        {
+                            case "/w":
+                                if (commande[1] != null && commande[2] !=null) {
+                                    utilisateurConcerne = commande[1];
+
+                                    foreach(Client c in server.clients)
+                                    {
+                                        if (c.username.Equals(utilisateurConcerne))
+                                        {
+                                           
+                                            c.SendMessage(commande[2]);
+                                        }                                      
+                                    }
+
+                                }                               
+                                break;
+
+                            default:
+                                string messageFinal = this.username + " : " + clientMessage;
+                                Message userMessage = new Message(messageFinal);
+                                server.BroadcastMessage(messageFinal, this, userMessage);
+                                break;
+                         
+
+                        }
+
+                        if (clientMessage.StartsWith("/w")){
+
+                        }
+
+                       
+
+                        
                     } 
                 }
 
