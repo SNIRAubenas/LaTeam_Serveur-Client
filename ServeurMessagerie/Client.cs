@@ -70,13 +70,18 @@ namespace ServeurMessagerie
 
                     SqliteDataReader r = commande.ExecuteReader();
 
-                    Console.WriteLine(r.ToString()); 
+
+                    while (r.Read())
+                    {
+                    }
+
+                    
 
                     //
 
-                    commande.CommandText = @"INSERT INTO utilisateurs (username, password) VALUES('$username','lol')";
-                    commande.Parameters.AddWithValue("$username", this.username);
-                    commande.ExecuteReader();
+                    //commande.CommandText = @"INSERT INTO utilisateurs (username, password) VALUES('$username','lol')";
+                    //commande.Parameters.AddWithValue("$username", this.username);
+                    //commande.ExecuteReader();
 
                 } else
                 {
