@@ -6,6 +6,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Data.Sqlite;
+using System.Data.Common;
 
 namespace ServeurMessagerie
 
@@ -18,6 +19,7 @@ namespace ServeurMessagerie
 
         public Serveur()
         {
+
             SqliteConnectionStringBuilder builder = new SqliteConnectionStringBuilder();
            
             builder.DataSource = "archives.db";
@@ -26,6 +28,8 @@ namespace ServeurMessagerie
             bdd.Open();
 
             var command = bdd.CreateCommand();
+
+           
 
             //command.CommandText = @"CREATE TABLE utilisateurs (
 	           //                     user_id INTEGER PRIMARY KEY,
