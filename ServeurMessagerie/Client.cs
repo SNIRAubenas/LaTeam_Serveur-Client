@@ -79,9 +79,9 @@ namespace ServeurMessagerie
                                 break;
 
                             default:
-                                string messageFinal = this.username + " : " + clientMessage;
-                                Message userMessage = new Message(messageFinal);
-                                server.BroadcastMessage(messageFinal, this, userMessage);
+                                string messageFinal = this.username + " : " + clientMessage;    
+                                userMessage.MessagesGetterSetter.Add(messageFinal);
+                                server.BroadcastMessage(this, userMessage);
                                 break;
                          
 
