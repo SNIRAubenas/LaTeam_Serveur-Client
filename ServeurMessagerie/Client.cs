@@ -97,9 +97,9 @@ namespace ServeurMessagerie
                     } 
                     else //Sinon ça veut dire que c'est un nouveau utilisateur
                     {
-                        SendSQL(2);
+                        SendSQL(2); //On insert le nouveau utilisateur
 
-                        SendSQL(3);
+                        SendSQL(3); //On recup l'id du nouveau utilisateur
 
                         ExecuteReaderFromSql(sqlSelectMaxUserId);
 
