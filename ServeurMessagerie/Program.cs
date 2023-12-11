@@ -7,6 +7,7 @@ namespace ServeurMessagerie
     {
         static void Main(string[] args)
         {
+            //Création du serveur
             Serveur serveur = new Serveur();
         }
     }

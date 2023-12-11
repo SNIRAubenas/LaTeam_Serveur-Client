@@ -162,8 +162,8 @@ namespace ServeurMessagerie
 
                                     var commandeSQL3 = bdd.CreateCommand();
 
-                                    commandeSQL3.CommandText = @"DELETE FROM utilisateurs WHERE username=$username";
-                                    commandeSQL3.Parameters.AddWithValue("$username", utilisateurConcerne);
+                                    commandeSQL3.CommandText = @"DELETE FROM utilisateurs WHERE user_id=$username";
+                                    commandeSQL3.Parameters.AddWithValue("$user_id", Int32.Parse(id));
                                     commandeSQL3.ExecuteNonQuery();
 
                                 }
