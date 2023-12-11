@@ -17,6 +17,7 @@ namespace ServeurMessagerie
         private bool firstMessage = true;
 
         private string clientMessage;
+        private string[] commande;
 
         //BDD
         private SqliteConnection bdd;
@@ -91,11 +92,11 @@ namespace ServeurMessagerie
                     {
                         SendSQL(2);
 
-                        var commandeSQL5 = bdd.CreateCommand();
+                        var sqlSelectMaxUserId = bdd.CreateCommand();
 
-                        commandeSQL5.CommandText = @"select max(user_id) from utilisateurs";
+                        sqlSelectMaxUserId.CommandText = @"select max(user_id) from utilisateurs";
 
-                        result = commandeSQL5.ExecuteReader();
+                        result = sqlSelectMaxUserId.ExecuteReader();
 
                         while (result.Read())
                         {
@@ -113,9 +114,9 @@ namespace ServeurMessagerie
 
                         SendSQL(4);
 
-                        commandeSQL4.ExecuteNonQuery();
+                        sqlInsertMessage.ExecuteNonQuery();
 
-                        string[] commande = clientMessage.Split(" ",3);
+                        commande = clientMessage.Split(" ",3);
                         
 
                         switch (commande[0])
@@ -140,15 +141,7 @@ namespace ServeurMessagerie
 
                                 if(this.username == "admin")
                                 {
-                                    utilisateurConcerne = commande[1];
-                                    foreach (Client c in server.clients)
-                                    {
-                                        if (c.username.Equals(utilisateurConcerne))
-                                        {
-
-                                            c.tcpClient.Close();
-                                        }
-                                    }
+                                    closeConnexion();
 
                                 }
                                 
@@ -158,15 +151,7 @@ namespace ServeurMessagerie
 
                                 if (this.username == "admin")
                                 {
-                                    utilisateurConcerne = commande[1];
-                                    foreach (Client c in server.clients)
-                                    {
-                                        if (c.username.Equals(utilisateurConcerne))
-                                        {
-
-                                            c.tcpClient.Close();
-                                        }
-                                    }
+                                    closeConnexion();
 
                                     SendSQL(5);
 
@@ -197,6 +182,30 @@ namespace ServeurMessagerie
             byte[] data = Encoding.ASCII.GetBytes(message);
             clientStream.Write(data, 0, data.Length);
             clientStream.Flush();
+        }
+
+        public void closeConnexion()
+        {
+            utilisateurConcerne = commande[1];
+            foreach (Client c in server.clients)
+            {
+                if (c.username.Equals(utilisateurConcerne))
+                {
+
+                    c.tcpClient.Close();
+                }
+            }
+        }
+
+        public bool verifAdmin()
+        {
+            if (this.username == "admin")
+            {
+                return true;
+            } else
+            {
+                return false;
+            }
         }
 
         public void SendSQL(int index)
