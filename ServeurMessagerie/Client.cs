@@ -101,7 +101,7 @@ namespace ServeurMessagerie
                         {
                             this.id = result.GetString(0);
                         }
-                        Console.WriteLine(this.id);
+
                         this.username = clientMessage;
                     }
                     
