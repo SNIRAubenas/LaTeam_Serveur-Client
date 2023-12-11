@@ -15,13 +15,13 @@ namespace ServeurMessagerie
         private NetworkStream clientStream;
         private string utilisateurConcerne;
         private bool firstMessage = true;
-        private Message userMessage;
+        
 
 
         //BDD
         private SqliteConnection bdd;
         private string username;
-        private int id;
+        private string id;
         private string password;
         //BDD
 
@@ -69,12 +69,14 @@ namespace ServeurMessagerie
 
                     SqliteDataReader r = commandeSQL1.ExecuteReader();
                     string reponse = null;
+              
 
                     while (r.Read())
                     {
                         reponse = r.GetString(1);
+                        this.id = r.GetString(0);
                     }
-                    
+                    Console.WriteLine(this.id);
 
                     if(reponse != null)
                     {
@@ -97,15 +99,15 @@ namespace ServeurMessagerie
                     {
 
                         string[] commande = clientMessage.Split(" ",3);
-                        utilisateurConcerne = commande[1];
+                        
 
                         switch (commande[0])
                         {
                             case "/w":
                                 if (commande[1] != null && commande[2] !=null) {
-                                    
+                                    utilisateurConcerne = commande[1];
 
-                                    foreach(Client c in server.clients)
+                                    foreach (Client c in server.clients)
                                     {
                                         if (c.username.Equals(utilisateurConcerne))
                                         {
@@ -121,6 +123,7 @@ namespace ServeurMessagerie
 
                                 if(this.username == "admin")
                                 {
+                                    utilisateurConcerne = commande[1];
                                     foreach (Client c in server.clients)
                                     {
                                         if (c.username.Equals(utilisateurConcerne))
@@ -138,6 +141,7 @@ namespace ServeurMessagerie
 
                                 if (this.username == "admin")
                                 {
+                                    utilisateurConcerne = commande[1];
                                     foreach (Client c in server.clients)
                                     {
                                         if (c.username.Equals(utilisateurConcerne))

@@ -22,17 +22,12 @@ namespace ServeurMessagerie
 
             SqliteConnectionStringBuilder builder = new SqliteConnectionStringBuilder();
            
-            builder.DataSource = "archivesTEST.db";
+            builder.DataSource = "archives.db";
 
             SqliteConnection bdd = new SqliteConnection(builder.ConnectionString);
             bdd.Open();
 
             var command = bdd.CreateCommand();
-
-            //SI ELLE EXISTE PAS ON CREE SINON ON MANGE AYMAN
-
-
-
 
 
             command.CommandText = @"CREATE TABLE IF NOT EXISTS utilisateurs( user_id INTEGER PRIMARY KEY,username TEXT NOT NULL,
