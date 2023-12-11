@@ -105,6 +105,8 @@ namespace ServeurMessagerie
                         commandeSQL4.Parameters.AddWithValue("$user_id", Int32.Parse(id));
                         commandeSQL4.Parameters.AddWithValue("$date", DateTime.Now.ToString("hh:mm"));
 
+                        commandeSQL4.ExecuteNonQuery();
+
                         string[] commande = clientMessage.Split(" ",3);
                         
 
