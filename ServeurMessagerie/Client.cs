@@ -157,6 +157,8 @@ namespace ServeurMessagerie
 
                                 break;
 
+
+
                             default:
                                 string messageFinal = this.username + " " + DateTime.Now.ToString("hh:mm") + " : \r\n" + clientMessage + "\r\n";
                                 server.BroadcastMessage(this, messageFinal);
