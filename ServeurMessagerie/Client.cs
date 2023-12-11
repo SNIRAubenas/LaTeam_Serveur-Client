@@ -113,6 +113,8 @@ namespace ServeurMessagerie
 
                         SendSQL(4);
 
+                        commandeSQL4.ExecuteNonQuery();
+
                         string[] commande = clientMessage.Split(" ",3);
                         
 
