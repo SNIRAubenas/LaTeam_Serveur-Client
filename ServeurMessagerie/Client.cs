@@ -97,13 +97,13 @@ namespace ServeurMessagerie
                     {
 
                         string[] commande = clientMessage.Split(" ",3);
-                        
+                        utilisateurConcerne = commande[1];
 
                         switch (commande[0])
                         {
                             case "/w":
                                 if (commande[1] != null && commande[2] !=null) {
-                                    utilisateurConcerne = commande[1];
+                                    
 
                                     foreach(Client c in server.clients)
                                     {
@@ -115,6 +115,46 @@ namespace ServeurMessagerie
                                     }
 
                                 }                               
+                                break;
+
+                            case "/k":
+
+                                if(this.username == "admin")
+                                {
+                                    foreach (Client c in server.clients)
+                                    {
+                                        if (c.username.Equals(utilisateurConcerne))
+                                        {
+
+                                            c.tcpClient.Close();
+                                        }
+                                    }
+
+                                }
+                                
+                                break;
+
+                            case "/b":
+
+                                if (this.username == "admin")
+                                {
+                                    foreach (Client c in server.clients)
+                                    {
+                                        if (c.username.Equals(utilisateurConcerne))
+                                        {
+
+                                            c.tcpClient.Close();
+                                        }
+                                    }
+
+                                    var commandeSQL3 = bdd.CreateCommand();
+
+                                    commandeSQL3.CommandText = @"DELETE FROM utilisateurs WHERE username=$username";
+                                    commandeSQL3.Parameters.AddWithValue("$username", utilisateurConcerne);
+                                    commandeSQL3.ExecuteNonQuery();
+
+                                }
+
                                 break;
 
                             default:
