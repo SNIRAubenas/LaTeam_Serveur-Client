@@ -10,14 +10,16 @@ namespace ServeurMessagerie
 {
     class Client
     {
+        //Serveur Messagerie
         private TcpClient tcpClient;
         private Serveur server;
         private NetworkStream clientStream;
         private string utilisateurConcerne;
         private bool firstMessage = true;
-
         private string clientMessage;
         private string[] commande;
+        //Serveur Messagerie
+
 
         //BDD
         private SqliteConnection bdd;
@@ -35,6 +37,7 @@ namespace ServeurMessagerie
         private SqliteDataReader result;
         //BDD
 
+        //Constructeur du Client
         public Client(TcpClient tcpClient, Serveur server, SqliteConnection bdd)
         {
             this.tcpClient = tcpClient;
@@ -45,6 +48,7 @@ namespace ServeurMessagerie
 
         }
 
+        //Methode appelé lors de la création d'un client/Nouvelle connection
         public void Run()
         {
             byte[] message = new byte[4096];
@@ -56,18 +60,20 @@ namespace ServeurMessagerie
 
                 try
                 {
-                    bytesRead = clientStream.Read(message, 0, 4096);
+                    bytesRead = clientStream.Read(message, 0, 4096); //Methode .read bloquante, on attends un message
                 }
-                catch
+                catch //On catch toute les possibilités
                 {
                     break;
                 }
 
-                if (bytesRead == 0)
+                if (bytesRead == 0) //Si il n'y a aucun contenu dans le message lu, on sort de la boucle
                     break;
 
+                //On transforme notre tab de byte en string
                 clientMessage = Encoding.ASCII.GetString(message, 0, bytesRead);
 
+                //Si c'est le premier message, cela veut dire que le client nous envoies le nom d'utilisateur
                 if (firstMessage)
                 {
                     firstMessage = false;
@@ -78,18 +84,18 @@ namespace ServeurMessagerie
                     string reponse = null;
               
 
-                    while (result.Read())
+                    while (result.Read()) //Tant qu'il ya des lignes à lire dans la bdd :
                     {
-                        reponse = result.GetString(1);
-                        this.id = result.GetString(0);
+                        reponse = result.GetString(1); //GetString prend la colone du nom d'utilisateur
+                        this.id = result.GetString(0); //GetString prend la colone de l'id de l'utilisateur
                     }
                     
 
-                    if(reponse != null)
+                    if(reponse != null)//Si il y a une reponse
                     {
-                        this.username = reponse;
+                        this.username = reponse; //Le username est egale à la reponse
                     } 
-                    else
+                    else //Sinon ça veut dire que c'est un nouveau utilisateur
                     {
                         SendSQL(2);
 
@@ -106,7 +112,7 @@ namespace ServeurMessagerie
                     }
                     
 
-                } else
+                } else //Si ce n'est pas le premier message
                 {
                     if(this.username != null)
                     {
