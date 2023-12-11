@@ -76,7 +76,7 @@ namespace ServeurMessagerie
                         reponse = r.GetString(1);
                         this.id = r.GetString(0);
                     }
-                    Console.WriteLine(this.id);
+                    
 
                     if(reponse != null)
                     {
@@ -89,6 +89,18 @@ namespace ServeurMessagerie
                         commandeSQL2.CommandText = @"INSERT INTO utilisateurs (username, password) VALUES($username,'')";
                         commandeSQL2.Parameters.AddWithValue("$username", clientMessage);
                         commandeSQL2.ExecuteNonQuery();
+
+                        var commandeSQL5 = bdd.CreateCommand();
+
+                        commandeSQL5.CommandText = @"select max(user_id) from utilisateurs";
+
+                        r = commandeSQL5.ExecuteReader();
+
+                        while (r.Read())
+                        {
+                            this.id = r.GetString(0);
+                        }
+                        Console.WriteLine(this.id);
                         this.username = clientMessage;
                     }
                     
@@ -98,12 +110,12 @@ namespace ServeurMessagerie
                     if(this.username != null)
                     {
 
-                        var commandeSQL3 = bdd.CreateCommand();
+                        var commandeSQL4 = bdd.CreateCommand();
 
-                        commandeSQL3.CommandText = @"INSERT INTO message (contenu, user_id,date) VALUES($contenu,$user_id,$date)";
-                        commandeSQL3.Parameters.AddWithValue("$contenu", clientMessage);
-                        commandeSQL3.Parameters.AddWithValue("$user_id", id);
-                        commandeSQL3.Parameters.AddWithValue("$date", DateTime.Now.ToString("hh:mm"));
+                        commandeSQL4.CommandText = @"INSERT INTO message (contenu, user_id,date) VALUES($contenu,$user_id,$date)";
+                        commandeSQL4.Parameters.AddWithValue("$contenu", clientMessage);
+                        commandeSQL4.Parameters.AddWithValue("$user_id", id);
+                        commandeSQL4.Parameters.AddWithValue("$date", DateTime.Now.ToString("hh:mm"));
 
                         string[] commande = clientMessage.Split(" ",3);
                         
