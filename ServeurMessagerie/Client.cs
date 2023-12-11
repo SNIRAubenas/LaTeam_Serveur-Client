@@ -177,7 +177,7 @@ namespace ServeurMessagerie
 
                 Console.WriteLine("console : " + clientMessage);
 
-            }
+            }//Quand on sort de la boucle
 
             tcpClient.Close();
             this.server.clients.Remove(this);
