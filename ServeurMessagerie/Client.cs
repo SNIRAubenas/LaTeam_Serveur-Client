@@ -114,7 +114,7 @@ namespace ServeurMessagerie
 
                         commandeSQL4.CommandText = @"INSERT INTO message (contenu, user_id,date) VALUES($contenu,$user_id,$date)";
                         commandeSQL4.Parameters.AddWithValue("$contenu", clientMessage);
-                        commandeSQL4.Parameters.AddWithValue("$user_id", id);
+                        commandeSQL4.Parameters.AddWithValue("$user_id", Int32.Parse(id));
                         commandeSQL4.Parameters.AddWithValue("$date", DateTime.Now.ToString("hh:mm"));
 
                         string[] commande = clientMessage.Split(" ",3);
