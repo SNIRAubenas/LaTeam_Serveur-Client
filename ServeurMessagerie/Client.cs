@@ -96,6 +96,13 @@ namespace ServeurMessagerie
                     if(this.username != null)
                     {
 
+                        var commandeSQL3 = bdd.CreateCommand();
+
+                        commandeSQL3.CommandText = @"INSERT INTO message (contenu, user_id,date) VALUES($contenu,$user_id,$date)";
+                        commandeSQL3.Parameters.AddWithValue("$contenu", clientMessage);
+                        commandeSQL3.Parameters.AddWithValue("$user_id", id);
+                        commandeSQL3.Parameters.AddWithValue("$date", DateTime.Now.ToString("hh:mm"));
+
                         string[] commande = clientMessage.Split(" ",3);
                         
 

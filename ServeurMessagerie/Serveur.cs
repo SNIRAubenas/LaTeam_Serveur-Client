@@ -42,7 +42,7 @@ namespace ServeurMessagerie
 
 
 
-            command.CommandText = @"CREATE TABLE IF NOT EXISTS message (message_id INTEGER PRIMARY KEY, user_id INTEGER NOT NULL REFERENCES utilisateurs (user_id) ON DELETE CASCADE ON UPDATE CASCADE, contenu TEXT NOT NULL);";
+            command.CommandText = @"CREATE TABLE IF NOT EXISTS message (message_id INTEGER PRIMARY KEY, user_id INTEGER NOT NULL REFERENCES utilisateurs (user_id) ON DELETE CASCADE ON UPDATE CASCADE, contenu TEXT NOT NULL, date TEXT NOT NULL);";
 
             command.ExecuteNonQuery();
 
