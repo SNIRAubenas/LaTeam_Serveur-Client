@@ -22,21 +22,29 @@ namespace ServeurMessagerie
 
             SqliteConnectionStringBuilder builder = new SqliteConnectionStringBuilder();
            
-            builder.DataSource = "archives.db";
+            builder.DataSource = "archivesTEST.db";
 
             SqliteConnection bdd = new SqliteConnection(builder.ConnectionString);
             bdd.Open();
 
             var command = bdd.CreateCommand();
 
-           //SI ELLE EXISTE PAS ON CREE SINON ON MANGE AYMAN
+            //SI ELLE EXISTE PAS ON CREE SINON ON MANGE AYMAN
 
-            //command.CommandText = @"CREATE TABLE utilisateurs (
-	           //                     user_id INTEGER PRIMARY KEY,
-	           //                     username TEXT NOT NULL,
-	           //                     password TEXT NOT NULL)";
 
-            //command.ExecuteNonQuery();
+
+
+
+            command.CommandText = @"CREATE TABLE IF NOT EXISTS utilisateurs( user_id INTEGER PRIMARY KEY,username TEXT NOT NULL,
+            password TEXT NOT NULL)";
+                              
+            command.ExecuteNonQuery();
+
+
+
+            command.CommandText = @"CREATE TABLE IF NOT EXISTS message (message_id INTEGER PRIMARY KEY, user_id INTEGER NOT NULL REFERENCES utilisateurs (user_id) ON DELETE CASCADE ON UPDATE CASCADE, contenu TEXT NOT NULL);";
+
+            command.ExecuteNonQuery();
 
             this.tcpListener = new TcpListener(IPAddress.Any, 6666);
             this.tcpListener.Start();
