@@ -15,14 +15,22 @@ namespace ServeurMessagerie
         private NetworkStream clientStream;
         private string utilisateurConcerne;
         private bool firstMessage = true;
-        
 
+        private string clientMessage;
 
         //BDD
         private SqliteConnection bdd;
         private string username;
         private string id;
         private string password;
+
+
+        private SqliteCommand sqlSelectUser;
+        private SqliteCommand sqlInsertUser;
+        private SqliteCommand sqlInsertMessage;
+        private SqliteCommand sqlDeleteUser;
+
+        private SqliteDataReader result;
         //BDD
 
         public Client(TcpClient tcpClient, Serveur server, SqliteConnection bdd)
@@ -56,25 +64,22 @@ namespace ServeurMessagerie
                 if (bytesRead == 0)
                     break;
 
-                string clientMessage = Encoding.ASCII.GetString(message, 0, bytesRead);
+                clientMessage = Encoding.ASCII.GetString(message, 0, bytesRead);
 
                 if (firstMessage)
                 {
                     firstMessage = false;
 
-                    var commandeSQL1 = bdd.CreateCommand();
+                    SendSQL(1);
 
-                    commandeSQL1.CommandText = @"SELECT * FROM utilisateurs WHERE username=$username";
-                    commandeSQL1.Parameters.AddWithValue("$username", clientMessage);
-
-                    SqliteDataReader r = commandeSQL1.ExecuteReader();
+                    SqliteDataReader result = sqlSelectUser.ExecuteReader();
                     string reponse = null;
               
 
-                    while (r.Read())
+                    while (result.Read())
                     {
-                        reponse = r.GetString(1);
-                        this.id = r.GetString(0);
+                        reponse = result.GetString(1);
+                        this.id = result.GetString(0);
                     }
                     
 
@@ -84,21 +89,17 @@ namespace ServeurMessagerie
                     } 
                     else
                     {
-                        var commandeSQL2 = bdd.CreateCommand();
-
-                        commandeSQL2.CommandText = @"INSERT INTO utilisateurs (username, password) VALUES($username,'')";
-                        commandeSQL2.Parameters.AddWithValue("$username", clientMessage);
-                        commandeSQL2.ExecuteNonQuery();
+                        SendSQL(2);
 
                         var commandeSQL5 = bdd.CreateCommand();
 
                         commandeSQL5.CommandText = @"select max(user_id) from utilisateurs";
 
-                        r = commandeSQL5.ExecuteReader();
+                        result = commandeSQL5.ExecuteReader();
 
-                        while (r.Read())
+                        while (result.Read())
                         {
-                            this.id = r.GetString(0);
+                            this.id = result.GetString(0);
                         }
                         Console.WriteLine(this.id);
                         this.username = clientMessage;
@@ -110,12 +111,7 @@ namespace ServeurMessagerie
                     if(this.username != null)
                     {
 
-                        var commandeSQL4 = bdd.CreateCommand();
-
-                        commandeSQL4.CommandText = @"INSERT INTO message (contenu, user_id,date) VALUES($contenu,$user_id,$date)";
-                        commandeSQL4.Parameters.AddWithValue("$contenu", clientMessage);
-                        commandeSQL4.Parameters.AddWithValue("$user_id", Int32.Parse(id));
-                        commandeSQL4.Parameters.AddWithValue("$date", DateTime.Now.ToString("hh:mm"));
+                        SendSQL(4);
 
                         string[] commande = clientMessage.Split(" ",3);
                         
@@ -170,11 +166,7 @@ namespace ServeurMessagerie
                                         }
                                     }
 
-                                    var commandeSQL3 = bdd.CreateCommand();
-
-                                    commandeSQL3.CommandText = @"DELETE FROM utilisateurs WHERE username=$username";
-                                    commandeSQL3.Parameters.AddWithValue("$username", utilisateurConcerne);
-                                    commandeSQL3.ExecuteNonQuery();
+                                    SendSQL(5);
 
                                 }
 
@@ -203,6 +195,49 @@ namespace ServeurMessagerie
             byte[] data = Encoding.ASCII.GetBytes(message);
             clientStream.Write(data, 0, data.Length);
             clientStream.Flush();
+        }
+
+        public void SendSQL(int index)
+        {
+            switch (index)
+            {
+                case 1:
+                    sqlSelectUser = bdd.CreateCommand();
+
+                    sqlSelectUser.CommandText = @"SELECT * FROM utilisateurs WHERE username=$username";
+                    sqlSelectUser.Parameters.AddWithValue("$username", clientMessage);
+                    break; 
+
+                case 2:
+                    sqlInsertUser = bdd.CreateCommand();
+
+                    sqlInsertUser.CommandText = @"INSERT INTO utilisateurs (username, password) VALUES($username,'')";
+                    sqlInsertUser.Parameters.AddWithValue("$username", clientMessage);
+                    sqlInsertUser.ExecuteNonQuery();
+                    break;
+
+                case 3:
+                    break; 
+
+                case 4:
+                    sqlInsertMessage = bdd.CreateCommand();
+
+                    sqlInsertMessage.CommandText = @"INSERT INTO message (contenu, user_id,date) VALUES($contenu,$user_id,$date)";
+                    sqlInsertMessage.Parameters.AddWithValue("$contenu", clientMessage);
+                    sqlInsertMessage.Parameters.AddWithValue("$user_id", Int32.Parse(id));
+                    sqlInsertMessage.Parameters.AddWithValue("$date", DateTime.Now.ToString("hh:mm"));
+
+                    sqlInsertMessage.ExecuteNonQuery();
+                    break;
+
+                case 5:
+                    sqlDeleteUser = bdd.CreateCommand();
+
+                    sqlDeleteUser.CommandText = @"DELETE FROM utilisateurs WHERE username=$username";
+                    sqlDeleteUser.Parameters.AddWithValue("$username", utilisateurConcerne);
+                    sqlDeleteUser.ExecuteNonQuery();
+                    break;
+            }
         }
     }
 }
