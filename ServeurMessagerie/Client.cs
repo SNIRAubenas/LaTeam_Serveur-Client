@@ -84,9 +84,10 @@ namespace ServeurMessagerie
                     {
                         var commandeSQL2 = bdd.CreateCommand();
 
-                        commandeSQL2.CommandText = @"INSERT INTO utilisateurs (username, password) VALUES($username,' ')";
-                        commandeSQL2.Parameters.AddWithValue("$username", reponse);
+                        commandeSQL2.CommandText = @"INSERT INTO utilisateurs (username, password) VALUES($username,'')";
+                        commandeSQL2.Parameters.AddWithValue("$username", clientMessage);
                         commandeSQL2.ExecuteNonQuery();
+                        this.username = clientMessage;
                     }
                     
 
