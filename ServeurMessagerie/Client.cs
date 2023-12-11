@@ -15,13 +15,13 @@ namespace ServeurMessagerie
         private NetworkStream clientStream;
         private string utilisateurConcerne;
         private bool firstMessage = true;
-        private Message userMessage;
+        
 
 
         //BDD
         private SqliteConnection bdd;
         private string username;
-        private int id;
+        private string id;
         private string password;
         //BDD
 
@@ -69,12 +69,14 @@ namespace ServeurMessagerie
 
                     SqliteDataReader r = commandeSQL1.ExecuteReader();
                     string reponse = null;
+              
 
                     while (r.Read())
                     {
                         reponse = r.GetString(1);
+                        this.id = r.GetString(0);
                     }
-                    
+                    Console.WriteLine(this.id);
 
                     if(reponse != null)
                     {
@@ -112,7 +114,7 @@ namespace ServeurMessagerie
                                 if (commande[1] != null && commande[2] !=null) {
                                     utilisateurConcerne = commande[1];
 
-                                    foreach(Client c in server.clients)
+                                    foreach (Client c in server.clients)
                                     {
                                         if (c.username.Equals(utilisateurConcerne))
                                         {
@@ -122,6 +124,48 @@ namespace ServeurMessagerie
                                     }
 
                                 }                               
+                                break;
+
+                            case "/k":
+
+                                if(this.username == "admin")
+                                {
+                                    utilisateurConcerne = commande[1];
+                                    foreach (Client c in server.clients)
+                                    {
+                                        if (c.username.Equals(utilisateurConcerne))
+                                        {
+
+                                            c.tcpClient.Close();
+                                        }
+                                    }
+
+                                }
+                                
+                                break;
+
+                            case "/b":
+
+                                if (this.username == "admin")
+                                {
+                                    utilisateurConcerne = commande[1];
+                                    foreach (Client c in server.clients)
+                                    {
+                                        if (c.username.Equals(utilisateurConcerne))
+                                        {
+
+                                            c.tcpClient.Close();
+                                        }
+                                    }
+
+                                    var commandeSQL3 = bdd.CreateCommand();
+
+                                    commandeSQL3.CommandText = @"DELETE FROM utilisateurs WHERE username=$username";
+                                    commandeSQL3.Parameters.AddWithValue("$username", utilisateurConcerne);
+                                    commandeSQL3.ExecuteNonQuery();
+
+                                }
+
                                 break;
 
 
