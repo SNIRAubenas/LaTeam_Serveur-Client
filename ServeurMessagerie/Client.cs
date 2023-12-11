@@ -60,28 +60,35 @@ namespace ServeurMessagerie
 
                 if (firstMessage)
                 {
-                    this.username = clientMessage;
                     firstMessage = false;
 
-                    var commandeSQL = bdd.CreateCommand();
+                    var commandeSQL1 = bdd.CreateCommand();
 
-                    commandeSQL.CommandText = @"SELECT * FROM utilisateurs WHERE username=$username";
-                    commandeSQL.Parameters.AddWithValue("$username", this.username);
+                    commandeSQL1.CommandText = @"SELECT * FROM utilisateurs WHERE username=$username";
+                    commandeSQL1.Parameters.AddWithValue("$username", clientMessage);
 
-                    SqliteDataReader r = commandeSQL.ExecuteReader();
-
+                    SqliteDataReader r = commandeSQL1.ExecuteReader();
+                    string reponse = null;
 
                     while (r.Read())
                     {
+                        reponse = r.GetString(1);
                     }
-
                     
 
-                    //
+                    if(reponse != null)
+                    {
+                        this.username = reponse;
+                    } 
+                    else
+                    {
+                        var commandeSQL2 = bdd.CreateCommand();
 
-                    //commande.CommandText = @"INSERT INTO utilisateurs (username, password) VALUES('$username','lol')";
-                    //commande.Parameters.AddWithValue("$username", this.username);
-                    //commande.ExecuteReader();
+                        commandeSQL2.CommandText = @"INSERT INTO utilisateurs (username, password) VALUES($username,' ')";
+                        commandeSQL2.Parameters.AddWithValue("$username", reponse);
+                        commandeSQL2.ExecuteNonQuery();
+                    }
+                    
 
                 } else
                 {
