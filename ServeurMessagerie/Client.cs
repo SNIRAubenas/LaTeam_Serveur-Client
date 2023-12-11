@@ -72,7 +72,7 @@ namespace ServeurMessagerie
 
                     SendSQL(1);
 
-                    SqliteDataReader result = sqlSelectUser.ExecuteReader();
+                    result = sqlSelectUser.ExecuteReader();
                     string reponse = null;
               
 
