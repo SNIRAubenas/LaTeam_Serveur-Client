@@ -32,6 +32,7 @@ namespace ServeurMessagerie
         private SqliteCommand sqlInsertUser;
         private SqliteCommand sqlInsertMessage;
         private SqliteCommand sqlDeleteUser;
+        private SqliteCommand sqlSelectMaxUserId;
 
         private SqliteDataReader result;
         //BDD
@@ -78,8 +79,8 @@ namespace ServeurMessagerie
                     firstMessage = false;
 
                     SendSQL(1);
-                    //Execution d'une commande SQLite
-                    result = sqlSelectUser.ExecuteReader();
+
+                    ExecuteReaderFromSql(sqlSelectUser);
                     string reponse = null;
               
 
@@ -98,17 +99,15 @@ namespace ServeurMessagerie
                     {
                         SendSQL(2);
 
-                        var sqlSelectMaxUserId = bdd.CreateCommand();
+                        SendSQL(3);
 
-                        sqlSelectMaxUserId.CommandText = @"select max(user_id) from utilisateurs";
-
-                        result = sqlSelectMaxUserId.ExecuteReader();
+                        ExecuteReaderFromSql(sqlSelectMaxUserId);
 
                         while (result.Read())
                         {
                             this.id = result.GetString(0);
                         }
-                        Console.WriteLine(this.id);
+
                         this.username = clientMessage;
                     }
                     
@@ -119,8 +118,7 @@ namespace ServeurMessagerie
                     {
 
                         SendSQL(4);
-                        //Execution d'une commande SQLite
-                        sqlInsertMessage.ExecuteNonQuery();
+
 
                         commande = clientMessage.Split(" ",3);
                         
@@ -147,7 +145,7 @@ namespace ServeurMessagerie
 
                                 if(this.username == "admin")
                                 {
-                                    closeConnexion();
+                                    CloseConnexion();
 
                                 }
                                 
@@ -157,7 +155,7 @@ namespace ServeurMessagerie
 
                                 if (this.username == "admin")
                                 {
-                                    closeConnexion();
+                                    CloseConnexion();
 
                                     SendSQL(5);
 
@@ -190,7 +188,7 @@ namespace ServeurMessagerie
             clientStream.Flush();
         }
 
-        public void closeConnexion()
+        public void CloseConnexion()
         {
             utilisateurConcerne = commande[1];
             foreach (Client c in server.clients)
@@ -203,15 +201,9 @@ namespace ServeurMessagerie
             }
         }
 
-        public bool verifAdmin()
+        public void ExecuteReaderFromSql(SqliteCommand command)
         {
-            if (this.username == "admin")
-            {
-                return true;
-            } else
-            {
-                return false;
-            }
+            result = command.ExecuteReader();
         }
 
         public void SendSQL(int index)
@@ -234,6 +226,9 @@ namespace ServeurMessagerie
                     break;
 
                 case 3:
+                    sqlSelectMaxUserId = bdd.CreateCommand();
+
+                    sqlSelectMaxUserId.CommandText = @"select max(user_id) from utilisateurs";
                     break; 
 
                 case 4:
@@ -245,6 +240,7 @@ namespace ServeurMessagerie
                     sqlInsertMessage.Parameters.AddWithValue("$date", DateTime.Now.ToString("hh:mm"));
 
                     sqlInsertMessage.ExecuteNonQuery();
+
                     break;
 
                 case 5:
