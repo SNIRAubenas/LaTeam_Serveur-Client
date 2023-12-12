@@ -78,9 +78,9 @@ namespace ServeurMessagerie
                 {
                     firstMessage = false;
 
-                    SendSQL(1);
+                    SendSQL(1); //On lance une requete SQLite pour savoir notre utilisateur existe déjâ dans la bdd 
 
-                    ExecuteReaderFromSql(sqlSelectUser);
+                    ExecuteReaderFromSql(sqlSelectUser); //On execute la commande
                     string reponse = null;
               
 
@@ -117,16 +117,23 @@ namespace ServeurMessagerie
                     if(this.username != null)
                     {
 
-                        SendSQL(4);
+                        SendSQL(4); //On sauvegarde le message envoyé par l'utilisateur dans la bdd
 
 
-                        commande = clientMessage.Split(" ",3);
+                        commande = clientMessage.Split(" ",3); //On split les 3 premiers espaces de la chaine de caractère, cela nous donne un tableau de string
                         
 
                         switch (commande[0])
                         {
-                            case "/w":
-                                if (commande[1] != null && commande[2] !=null) {
+                            case "/w": //Commande pour envoyer  des message privé
+
+                                /*
+                                 * Command[0] = La valeur de la commande
+                                 * Command[1] = L'utilisateur concerné
+                                 * Command[2] = Contenu lié a l'utilisateur concerné
+                                 * 
+                                 * */
+                                if (commande[1] != null && commande[2] !=null) { 
                                     utilisateurConcerne = commande[1];
 
                                     foreach (Client c in server.clients)
@@ -141,33 +148,42 @@ namespace ServeurMessagerie
                                 }                               
                                 break;
 
-                            case "/k":
+                            case "/k": //Commande de kick
 
                                 if(this.username == "admin")
                                 {
-                                    CloseConnexion();
+                                    CloseConnexion(); //On close la connection TCP au client
 
                                 }
                                 
                                 break;
 
-                            case "/b":
+                            case "/b": //Commande de ban
 
                                 if (this.username == "admin")
                                 {
-                                    CloseConnexion();
+                                    CloseConnexion(); //On close la connection TCP au client
 
-                                    SendSQL(5);
+                                    SendSQL(5); //Et on le supprime de la bdd
 
                                 }
 
                                 break;
 
+                            case "/modifier": //Commande pour modifier un utilisateur
+
+                                if(this.username == "admin")
+                                {
+                                    //Modifier un utilisateur
+
+                                }
+                                break;
 
 
-                            default:
-                                string messageFinal = this.username + " " + DateTime.Now.ToString("hh:mm") + " : \r\n" + clientMessage + "\r\n";
-                                server.BroadcastMessage(this, messageFinal);
+
+                            default: //Si il n'y a pas de commande tapé, on divulgue le message à tout le monde 
+                                string messageFinal = DateTime.Now.ToString("hh:mm") + " " + this.username   + " : \r\n" + clientMessage + "\r\n"; // Formatage de l'envoie : Date NomUser : leMessage
+                                server.BroadcastMessage(this, messageFinal); //On envoie quel client a envoyé le message et ce que le client à envoyé.
                                 break;
                         }
                     } 
@@ -175,20 +191,20 @@ namespace ServeurMessagerie
 
                 Console.WriteLine("console : " + clientMessage);
 
-            }//Quand on sort de la boucle
+            }//Quand on sort de la boucle, on close la connection TCP et on remove le client de notre List de client
 
             tcpClient.Close();
             this.server.clients.Remove(this);
         }
 
-        public void SendMessage(string message)
+        public void SendMessage(string message) //Permet l'envoie d'un string à notre client TCP
         {
             byte[] data = Encoding.ASCII.GetBytes(message);
             clientStream.Write(data, 0, data.Length);
             clientStream.Flush();
         }
 
-        public void CloseConnexion()
+        public void CloseConnexion() //Permet de fermer la connection TCP à un utilisateur ciblé
         {
             utilisateurConcerne = commande[1];
             foreach (Client c in server.clients)
@@ -201,23 +217,23 @@ namespace ServeurMessagerie
             }
         }
 
-        public void ExecuteReaderFromSql(SqliteCommand command)
+        public void ExecuteReaderFromSql(SqliteCommand command) //Execute les commandes SQLite reader
         {
             result = command.ExecuteReader();
         }
 
-        public void SendSQL(int index)
+        public void SendSQL(int index) //Toutes les requetes SQLite
         {
             switch (index)
             {
-                case 1:
+                case 1: //Savoir si un utilisateur existe
                     sqlSelectUser = bdd.CreateCommand();
 
                     sqlSelectUser.CommandText = @"SELECT * FROM utilisateurs WHERE username=$username";
                     sqlSelectUser.Parameters.AddWithValue("$username", clientMessage);
                     break; 
 
-                case 2:
+                case 2: //Insertion d'un utilisateur dans la bdd
                     sqlInsertUser = bdd.CreateCommand();
 
                     sqlInsertUser.CommandText = @"INSERT INTO utilisateurs (username, password) VALUES($username,'')";
@@ -225,29 +241,29 @@ namespace ServeurMessagerie
                     sqlInsertUser.ExecuteNonQuery();
                     break;
 
-                case 3:
+                case 3://Selection de l'id du dernier utilisateur
                     sqlSelectMaxUserId = bdd.CreateCommand();
 
                     sqlSelectMaxUserId.CommandText = @"select max(user_id) from utilisateurs";
                     break; 
 
-                case 4:
+                case 4://Insertion du message écrit par l'utilisateur dans la bdd
                     sqlInsertMessage = bdd.CreateCommand();
 
                     sqlInsertMessage.CommandText = @"INSERT INTO message (contenu, user_id,date) VALUES($contenu,$user_id,$date)";
-                    sqlInsertMessage.Parameters.AddWithValue("$contenu", clientMessage);
-                    sqlInsertMessage.Parameters.AddWithValue("$user_id", Int32.Parse(id));
-                    sqlInsertMessage.Parameters.AddWithValue("$date", DateTime.Now.ToString("hh:mm"));
+                    sqlInsertMessage.Parameters.AddWithValue("$contenu", clientMessage); //Le contenu du message
+                    sqlInsertMessage.Parameters.AddWithValue("$user_id", Int32.Parse(id));//ID du user qui a envoyé le message
+                    sqlInsertMessage.Parameters.AddWithValue("$date", DateTime.Now.ToString("hh:mm")); //La date du message envoyé
 
                     sqlInsertMessage.ExecuteNonQuery();
 
                     break;
 
-                case 5:
+                case 5: //Suppression d'un utilisateur
                     sqlDeleteUser = bdd.CreateCommand();
 
                     sqlDeleteUser.CommandText = @"DELETE FROM utilisateurs WHERE username=$username";
-                    sqlDeleteUser.Parameters.AddWithValue("$username", utilisateurConcerne);
+                    sqlDeleteUser.Parameters.AddWithValue("$username", utilisateurConcerne); //Le nom de l'utilisateur (nom unique)
                     sqlDeleteUser.ExecuteNonQuery();
                     break;
             }
