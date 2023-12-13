@@ -16,6 +16,7 @@ namespace ServeurMessagerie
         private NetworkStream clientStream;
         private string utilisateurConcerne;
         private bool firstMessage = true;
+        private bool utilisateurExistant;
         private string clientMessage;
         private string[] commande;
         //Serveur Messagerie
@@ -57,6 +58,7 @@ namespace ServeurMessagerie
 
             while (true)
             {
+                utilisateurExistant = false;
                 bytesRead = 0;
 
                 try
@@ -141,19 +143,19 @@ namespace ServeurMessagerie
                                     {
                                         if (c.username.Equals(utilisateurConcerne))
                                         {
-                                           
-                                            c.SendMessage(commande[2]);
-                                        }
-                                        else
-                                        {
-                                            SendMessageErreur("L'utilisateur n'existe pas !");
-                                        }                                      
+                                            utilisateurExistant = true;
+                                            c.SendMessage("\r\n" + this.username + " vous chuchotes : " + commande[2]);
+                                        }                                       
+                                    }
+                                    if (!utilisateurExistant)
+                                    {
+                                        SendMessageErreur("\r\nL'utilisateur n'existe pas !");
                                     }
 
                                 }
                                 else
                                 {
-                                    SendMessageErreur("Saisie invalide !");
+                                    SendMessageErreur("\r\nSaisie invalide !");
                                 }                               
                                 break;
 
@@ -166,7 +168,7 @@ namespace ServeurMessagerie
                                 }
                                 else
                                 {
-                                    SendMessageErreur("Vous n'avez pas les droits administrateur !");
+                                    SendMessageErreur("\r\nVous n'avez pas les droits administrateur !");
                                 }
                                 
                                 break;
@@ -182,7 +184,7 @@ namespace ServeurMessagerie
                                 }
                                 else
                                 {
-                                    SendMessageErreur("Vous n'avez pas les droits administrateur !");
+                                    SendMessageErreur("\r\nVous n'avez pas les droits administrateur !");
                                 }
 
                                 break;
