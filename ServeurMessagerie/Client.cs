@@ -29,9 +29,13 @@ namespace ServeurMessagerie
 
         private SqliteCommand sqlSelectUser;
         private SqliteCommand sqlInsertUser;
-        private SqliteCommand sqlInsertMessage;
         private SqliteCommand sqlDeleteUser;
+
         private SqliteCommand sqlSelectMaxUserId;
+
+        private SqliteCommand sqlInsertMessage;
+        private SqliteCommand sqlMaxMessageId;
+        private SqliteCommand sqlSelectLastMessages;
 
         private SqliteDataReader result;
         //BDD
@@ -44,7 +48,7 @@ namespace ServeurMessagerie
             this.clientStream = tcpClient.GetStream();
             this.bdd = bdd;
            
-
+            
         }
 
         //Methode appelé lors de la création d'un client/Nouvelle connection
@@ -109,9 +113,30 @@ namespace ServeurMessagerie
 
                         this.username = clientMessage;
                     }
-                    
 
-                } else //Si ce n'est pas le premier message
+
+                    //ENVOI DES 10 DERNIERS MESSAGES
+                    string lastMessages = "lastMessages:\r\n";
+
+                    SendSQL(7);
+                    ExecuteReaderFromSql(sqlSelectLastMessages);
+
+                    while (result.Read())
+                    {
+
+                        lastMessages = lastMessages + result.GetString(0) + ";";
+                        lastMessages = lastMessages + result.GetString(1) + ";";
+                        lastMessages = lastMessages + result.GetString(2) + "\r\n";
+                    }
+
+
+                    Console.WriteLine(lastMessages);
+                    SendMessage(lastMessages);
+                    //ENVOI DES 10 DERNIERS MESSAGES
+
+
+                }
+                else //Si ce n'est pas le premier message
                 {
                     if(this.username != null)
                     {
@@ -253,7 +278,7 @@ namespace ServeurMessagerie
 
                     sqlSelectUser.CommandText = @"SELECT * FROM utilisateurs WHERE username=$username";
                     sqlSelectUser.Parameters.AddWithValue("$username", clientMessage);
-                    break; 
+                    break;
 
                 case 2: //Insertion d'un utilisateur dans la bdd
                     sqlInsertUser = bdd.CreateCommand();
@@ -267,7 +292,7 @@ namespace ServeurMessagerie
                     sqlSelectMaxUserId = bdd.CreateCommand();
 
                     sqlSelectMaxUserId.CommandText = @"select max(user_id) from utilisateurs";
-                    break; 
+                    break;
 
                 case 4://Insertion du message écrit par l'utilisateur dans la bdd
                     sqlInsertMessage = bdd.CreateCommand();
@@ -288,6 +313,13 @@ namespace ServeurMessagerie
                     sqlDeleteUser.Parameters.AddWithValue("$username", utilisateurConcerne); //Le nom de l'utilisateur (nom unique)
                     sqlDeleteUser.ExecuteNonQuery();
                     break;
+
+                case 7: //RECUPERATION DES 10 DERNIERS MESSAGES
+                    sqlSelectLastMessages = bdd.CreateCommand();
+
+                    sqlSelectLastMessages.CommandText = @"SELECT u.username, m.date, m.contenu FROM utilisateurs u JOIN message m ON u.user_id=m.user_id";
+                    break;
+
             }
         }
     }
