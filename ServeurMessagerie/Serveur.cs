@@ -26,6 +26,7 @@ namespace ServeurMessagerie
             //Création de la bdd a l'endroit par default : C:\Users\%user\source\repos\LaTeam_Serveuripide\ServeurMessagerie\bin\Debug\net7.0
             builder.DataSource = "archives.db";
 
+            //Connection
             SqliteConnection bdd = new SqliteConnection(builder.ConnectionString);
             bdd.Open();
 

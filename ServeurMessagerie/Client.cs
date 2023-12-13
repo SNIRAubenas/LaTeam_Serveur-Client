@@ -33,6 +33,7 @@ namespace ServeurMessagerie
         private SqliteCommand sqlInsertMessage;
         private SqliteCommand sqlDeleteUser;
         private SqliteCommand sqlSelectMaxUserId;
+        private SqliteCommand sqlModifyUser;
 
         private SqliteDataReader result;
         //BDD
@@ -191,6 +192,7 @@ namespace ServeurMessagerie
                                 if(this.username == "admin")
                                 {
                                     //Modifier un utilisateur
+                                    //SendSQL(7);
 
                                 }
                                 break;
@@ -289,6 +291,21 @@ namespace ServeurMessagerie
                     sqlDeleteUser.Parameters.AddWithValue("$username", utilisateurConcerne); //Le nom de l'utilisateur (nom unique)
                     sqlDeleteUser.ExecuteNonQuery();
                     break;
+
+                case 6:
+
+                    //
+                    break;
+
+                case 7: //Modification d'un utilisateur
+                    sqlModifyUser = bdd.CreateCommand();
+
+                    sqlModifyUser.CommandText = @"";
+
+
+                    break;
+
+
             }
         }
     }
