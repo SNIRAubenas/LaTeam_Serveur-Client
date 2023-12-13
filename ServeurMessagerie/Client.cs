@@ -317,7 +317,7 @@ namespace ServeurMessagerie
                 case 7: //RECUPERATION DES 10 DERNIERS MESSAGES
                     sqlSelectLastMessages = bdd.CreateCommand();
 
-                    sqlSelectLastMessages.CommandText = @"SELECT u.username, m.date, m.contenu FROM utilisateurs u JOIN message m ON u.user_id=m.user_id";
+                    sqlSelectLastMessages.CommandText = @"SELECT u.username, m.date, m.contenu FROM utilisateurs u JOIN message m ON u.user_id=m.user_id order BY m.date desc LIMIT 10";
                     break;
 
             }
