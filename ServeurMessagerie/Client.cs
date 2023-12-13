@@ -26,14 +26,14 @@ namespace ServeurMessagerie
         private SqliteConnection bdd;
         private string username;
         private string id;
-        private string password;
+        private string nouveauNom;
 
         private SqliteCommand sqlSelectUser;
         private SqliteCommand sqlInsertUser;
         private SqliteCommand sqlDeleteUser;
+        private SqliteCommand sqlUpdateUser;
 
         private SqliteCommand sqlSelectMaxUserId;
-        private SqliteCommand sqlModifyUser;
 
         private SqliteCommand sqlInsertMessage;
         private SqliteCommand sqlMaxMessageId;
@@ -121,7 +121,7 @@ namespace ServeurMessagerie
                     //ENVOI DES 10 DERNIERS MESSAGES
                     string lastMessages = "lastMessages:\r\n";
 
-                    SendSQL(7);
+                    SendSQL(6);
                     ExecuteReaderFromSql(sqlSelectLastMessages);
 
                     while (result.Read())
@@ -218,7 +218,20 @@ namespace ServeurMessagerie
                                 if(this.username == "admin")
                                 {
                                     //Modifier un utilisateur
-                                    //SendSQL(7);
+
+                                    nouveauNom = commande[2];
+                                    utilisateurConcerne = commande[1];
+
+                                    foreach (Client c in server.clients)
+                                    {
+                                        if (c.username.Equals(utilisateurConcerne))
+                                        {
+                                            c.username = nouveauNom;
+                                        }
+                                    }
+
+
+                                    SendSQL(7);
 
                                 }
                                 break;
@@ -311,10 +324,20 @@ namespace ServeurMessagerie
                     sqlDeleteUser.ExecuteNonQuery();
                     break;
 
-                case 7: //RECUPERATION DES 10 DERNIERS MESSAGES
+                case 6: //RECUPERATION DES 10 DERNIERS MESSAGES
                     sqlSelectLastMessages = bdd.CreateCommand();
 
                     sqlSelectLastMessages.CommandText = @"SELECT u.username, m.date, m.contenu FROM utilisateurs u JOIN message m ON u.user_id=m.user_id order BY m.date desc LIMIT 10";
+                    break;
+
+                case 7:
+                    sqlUpdateUser = bdd.CreateCommand();
+
+                    sqlUpdateUser.CommandText = @"UPDATE utilisateurs SET username=$newName WHERE username=$username";
+                    sqlUpdateUser.Parameters.AddWithValue("$username" ,utilisateurConcerne);
+                    sqlUpdateUser.Parameters.AddWithValue("$newName" ,nouveauNom);
+
+                    sqlUpdateUser.ExecuteNonQuery();
                     break;
 
             }
