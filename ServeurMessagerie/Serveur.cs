@@ -92,7 +92,7 @@ namespace ServeurMessagerie
                 }
 
                 BroadcastMessage(client, listUser);
-                Thread.Sleep(10000);
+                Thread.Sleep(2000);
             }
             
         }
