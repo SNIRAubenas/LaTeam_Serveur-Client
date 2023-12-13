@@ -103,7 +103,6 @@ namespace LaTeamClient
                                 {
                                     
                                     test = test + "-" + s + "\r\n";
-                                    test = test.Substring(1);
                                     this.textBoxEnligne.Text = test;
                                 });
                             }
