@@ -16,6 +16,7 @@ namespace ServeurMessagerie
         private NetworkStream clientStream;
         private string utilisateurConcerne;
         private bool firstMessage = true;
+        private bool utilisateurExistant;
         private string clientMessage;
         private string[] commande;
         //Serveur Messagerie
@@ -32,6 +33,7 @@ namespace ServeurMessagerie
         private SqliteCommand sqlDeleteUser;
 
         private SqliteCommand sqlSelectMaxUserId;
+        private SqliteCommand sqlModifyUser;
 
         private SqliteCommand sqlInsertMessage;
         private SqliteCommand sqlMaxMessageId;
@@ -59,6 +61,7 @@ namespace ServeurMessagerie
 
             while (true)
             {
+                utilisateurExistant = false;
                 bytesRead = 0;
 
                 try
@@ -164,19 +167,19 @@ namespace ServeurMessagerie
                                     {
                                         if (c.username.Equals(utilisateurConcerne))
                                         {
-                                           
-                                            c.SendMessage(commande[2]);
-                                        }
-                                        else
-                                        {
-                                            SendMessageErreur("L'utilisateur n'existe pas !");
-                                        }                                      
+                                            utilisateurExistant = true;
+                                            c.SendMessage("\r\n" + this.username + " vous chuchotes : " + commande[2]);
+                                        }                                       
+                                    }
+                                    if (!utilisateurExistant)
+                                    {
+                                        SendMessage("\r\nL'utilisateur n'existe pas !");
                                     }
 
                                 }
                                 else
                                 {
-                                    SendMessageErreur("Saisie invalide !");
+                                    SendMessage("\r\nSaisie invalide !");
                                 }                               
                                 break;
 
@@ -189,7 +192,7 @@ namespace ServeurMessagerie
                                 }
                                 else
                                 {
-                                    SendMessageErreur("Vous n'avez pas les droits administrateur !");
+                                    SendMessage("\r\nVous n'avez pas les droits administrateur !");
                                 }
                                 
                                 break;
@@ -205,16 +208,17 @@ namespace ServeurMessagerie
                                 }
                                 else
                                 {
-                                    SendMessageErreur("Vous n'avez pas les droits administrateur !");
+                                    SendMessage("\r\nVous n'avez pas les droits administrateur !");
                                 }
 
                                 break;
 
-                            case "/modifier": //Commande pour modifier un utilisateur
+                            case "/m": //Commande pour modifier un utilisateur
 
                                 if(this.username == "admin")
                                 {
                                     //Modifier un utilisateur
+                                    //SendSQL(7);
 
                                 }
                                 break;
@@ -238,13 +242,6 @@ namespace ServeurMessagerie
         }
 
         public void SendMessage(string message) //Permet l'envoie d'un string à notre client TCP
-        {
-            byte[] data = Encoding.ASCII.GetBytes(message);
-            clientStream.Write(data, 0, data.Length);
-            clientStream.Flush();
-        }
-
-        public void SendMessageErreur(string message) //Permet l'envoie d'un message d'erreur à notre client TCP
         {
             byte[] data = Encoding.ASCII.GetBytes(message);
             clientStream.Write(data, 0, data.Length);
