@@ -292,19 +292,6 @@ namespace ServeurMessagerie
                     sqlDeleteUser.ExecuteNonQuery();
                     break;
 
-                case 6:
-
-                    //
-                    break;
-
-                case 7: //Modification d'un utilisateur
-                    sqlModifyUser = bdd.CreateCommand();
-
-                    sqlModifyUser.CommandText = @"";
-
-
-                    break;
-
 
             }
         }
