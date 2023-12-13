@@ -149,13 +149,13 @@ namespace ServeurMessagerie
                                     }
                                     if (!utilisateurExistant)
                                     {
-                                        SendMessageErreur("\r\nL'utilisateur n'existe pas !");
+                                        SendMessage("\r\nL'utilisateur n'existe pas !");
                                     }
 
                                 }
                                 else
                                 {
-                                    SendMessageErreur("\r\nSaisie invalide !");
+                                    SendMessage("\r\nSaisie invalide !");
                                 }                               
                                 break;
 
@@ -168,7 +168,7 @@ namespace ServeurMessagerie
                                 }
                                 else
                                 {
-                                    SendMessageErreur("\r\nVous n'avez pas les droits administrateur !");
+                                    SendMessage("\r\nVous n'avez pas les droits administrateur !");
                                 }
                                 
                                 break;
@@ -184,7 +184,7 @@ namespace ServeurMessagerie
                                 }
                                 else
                                 {
-                                    SendMessageErreur("\r\nVous n'avez pas les droits administrateur !");
+                                    SendMessage("\r\nVous n'avez pas les droits administrateur !");
                                 }
 
                                 break;
