@@ -142,9 +142,17 @@ namespace ServeurMessagerie
                                         {
                                            
                                             c.SendMessage(commande[2]);
+                                        }
+                                        else
+                                        {
+                                            SendMessageErreur("L'utilisateur n'existe pas !");
                                         }                                      
                                     }
 
+                                }
+                                else
+                                {
+                                    SendMessageErreur("Saisie invalide !");
                                 }                               
                                 break;
 
@@ -154,6 +162,10 @@ namespace ServeurMessagerie
                                 {
                                     CloseConnexion(); //On close la connection TCP au client
 
+                                }
+                                else
+                                {
+                                    SendMessageErreur("Vous n'avez pas les droits administrateur !");
                                 }
                                 
                                 break;
@@ -166,6 +178,10 @@ namespace ServeurMessagerie
 
                                     SendSQL(5); //Et on le supprime de la bdd
 
+                                }
+                                else
+                                {
+                                    SendMessageErreur("Vous n'avez pas les droits administrateur !");
                                 }
 
                                 break;
@@ -198,6 +214,13 @@ namespace ServeurMessagerie
         }
 
         public void SendMessage(string message) //Permet l'envoie d'un string à notre client TCP
+        {
+            byte[] data = Encoding.ASCII.GetBytes(message);
+            clientStream.Write(data, 0, data.Length);
+            clientStream.Flush();
+        }
+
+        public void SendMessageErreur(string message) //Permet l'envoie d'un message d'erreur à notre client TCP
         {
             byte[] data = Encoding.ASCII.GetBytes(message);
             clientStream.Write(data, 0, data.Length);
