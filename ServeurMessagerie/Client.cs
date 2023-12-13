@@ -224,13 +224,6 @@ namespace ServeurMessagerie
             clientStream.Flush();
         }
 
-        public void SendMessageErreur(string message) //Permet l'envoie d'un message d'erreur à notre client TCP
-        {
-            byte[] data = Encoding.ASCII.GetBytes(message);
-            clientStream.Write(data, 0, data.Length);
-            clientStream.Flush();
-        }
-
         public void CloseConnexion() //Permet de fermer la connection TCP à un utilisateur ciblé
         {
             utilisateurConcerne = commande[1];
