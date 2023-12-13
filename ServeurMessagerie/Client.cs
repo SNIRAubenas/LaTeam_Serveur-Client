@@ -27,7 +27,6 @@ namespace ServeurMessagerie
         private string id;
         private string password;
 
-
         private SqliteCommand sqlSelectUser;
         private SqliteCommand sqlInsertUser;
         private SqliteCommand sqlInsertMessage;
