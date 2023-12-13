@@ -189,7 +189,7 @@ namespace ServeurMessagerie
 
                                 break;
 
-                            case "/modifier": //Commande pour modifier un utilisateur
+                            case "/m": //Commande pour modifier un utilisateur
 
                                 if(this.username == "admin")
                                 {
