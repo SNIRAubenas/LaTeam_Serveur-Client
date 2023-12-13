@@ -58,7 +58,7 @@ namespace ServeurMessagerie
         {
             byte[] message = new byte[4096];
             int bytesRead;
-
+           
             while (true)
             {
                 utilisateurExistant = false;
@@ -127,9 +127,9 @@ namespace ServeurMessagerie
                     while (result.Read())
                     {
 
-                        lastMessages = lastMessages + result.GetString(0) + ";";
-                        lastMessages = lastMessages + result.GetString(1) + ";";
-                        lastMessages = lastMessages + result.GetString(2) + "\r\n";
+                        lastMessages = lastMessages + "["+ result.GetString(1) + "]"; //date
+                        lastMessages = lastMessages + result.GetString(0) + " : \r\n"; // utilisateur                      
+                        lastMessages = lastMessages + result.GetString(2) + "\r\n";//content
                     }
 
 
@@ -234,12 +234,17 @@ namespace ServeurMessagerie
                                     SendSQL(7);
 
                                 }
+                                else
+                                {
+                                    SendMessage("\r\nVous n'avez pas les droits administrateur !");
+                                }
                                 break;
 
 
 
+
                             default: //Si il n'y a pas de commande tapé, on divulgue le message à tout le monde 
-                                string messageFinal = DateTime.Now.ToString("hh:mm") + " " + this.username   + " : \r\n" + clientMessage + "\r\n"; // Formatage de l'envoie : Date NomUser : leMessage
+                                string messageFinal = "[" + DateTime.Now.ToString("hh:mm") +"] " + this.username   + " : \r\n" + clientMessage + "\r\n"; // Formatage de l'envoie : Date NomUser : leMessage
                                 server.BroadcastMessage(this, messageFinal); //On envoie quel client a envoyé le message et ce que le client à envoyé.
                                 break;
                         }
