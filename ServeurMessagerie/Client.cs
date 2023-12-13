@@ -24,7 +24,7 @@ namespace ServeurMessagerie
 
         //BDD
         private SqliteConnection bdd;
-        private string username;
+        public string username;
         private string id;
         private string nouveauNom;
 

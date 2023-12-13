@@ -17,6 +17,7 @@ namespace ServeurMessagerie
         public List<Client> clients = new List<Client>();
         private Mutex mutexClient = new Mutex();
 
+        private Client client;
         public Serveur()
         {
 
@@ -62,7 +63,12 @@ namespace ServeurMessagerie
                 Console.WriteLine("Nouveau client !");
 
                 //Création du client
-                Client client = new Client(tcpClient, this, bdd);
+                client = new Client(tcpClient, this, bdd);
+
+                //ENVOIE USER CO
+
+                Thread userListThreah = new Thread(new ThreadStart(sendUserList));
+                userListThreah.Start();
 
                 mutexClient.WaitOne();// Acquérir le Mutex avant de manipuler la liste des clients
                 clients.Add(client); //On l'ajoute à notre List de Client
@@ -72,6 +78,26 @@ namespace ServeurMessagerie
                 clientThread.Start();
             }
         }
+
+
+        public void sendUserList()
+        {
+            while(true) 
+            {
+                string listUser = "ListeCon:";
+
+                foreach (Client client1 in clients)
+                {
+                    listUser += client1.username + ";";
+                }
+
+                BroadcastMessage(client, listUser);
+                Thread.Sleep(10000);
+            }
+            
+        }
+
+
 
         //Methode permettant l'envoie d'un message à tout le monde
         public void BroadcastMessage(Client sender, String message)
